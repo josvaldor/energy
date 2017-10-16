@@ -33,7 +33,6 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 public class Solar extends Energy {
 
 	public ArrayList<Energy> energyList;
-	public Map<String, Energy> energyMap = new HashMap<String, Energy>();
 	public Earth earth;
 	public Jupiter jupiter;
 	public Mars mars;
@@ -65,42 +64,48 @@ public class Solar extends Energy {
 		this.energyList.add(venus);
 		this.energyList.add(uranus);
 		this.energyList.add(sun);
-		this.energyMap.put("earth", earth);
-		this.energyMap.put("jupiter", jupiter);
-		this.energyMap.put("mars", mars);
-		this.energyMap.put("mercury", mercury);
-		this.energyMap.put("neptune", neptune);
-		this.energyMap.put("saturn", saturn);
-		this.energyMap.put("venus", venus);
-		this.energyMap.put("uranus", uranus);
-		this.energyMap.put("sun", sun);
 		this.getGravity();
 		this.setScale(0.00000005);
-		try {
-			this.compareSpace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			System.out.println(this.searchSpace("2000-01-01","2017-01-01",0.8,0.5));
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
 	}
 	
-	public void compareSpace() throws ParseException{
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM");
-		Date start = sdf.parse("1950.01");
-		Date end = sdf.parse("2017.04");
-
-		GregorianCalendar gcal = new GregorianCalendar();
-		gcal.setTime(start);
-		double value = 0;
-		while (!gcal.getTime().after(end)) {
-			value = this.compareSpace(gcal, 0.9);
-			 Date d = gcal.getTime();
-			if(value > .3)
-				System.out.println(value + " "+d);
-		    gcal.add(Calendar.DATE, 1);
+	public Map<String,List<Result>> searchSpace(String startDate, String endDate, double threshold,double match) throws ParseException{
+		Map<String,List<Result>> timeMap = new HashMap<String,List<Result>>();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date start = sdf.parse(startDate);
+		Date end = sdf.parse(endDate);
+		GregorianCalendar pointer = new GregorianCalendar();
+		pointer.setTime(start);
+		GregorianCalendar timeline = new GregorianCalendar();
+		timeline.setTime(start);
+		while(!timeline.getTime().after(end)){
+			this.setTime(timeline);
+			Date date = timeline.getTime();
+			String fDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
+			timeMap.put(fDate, new LinkedList<Result>());
+			System.out.println("+"+fDate);
+			while (!pointer.getTime().after(end)) {
+				Result result = this.compareSpace(pointer, threshold);
+				Date d = pointer.getTime();
+				String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(d);
+				result.time = formattedDate;
+				if(result.value != 1 && result.value > match){
+					timeMap.get(fDate).add(result);
+					System.out.println("-"+formattedDate+" "+result.value+" "+result.pairList);
+				}
+			    pointer.add(Calendar.MONTH, 1);
+			}
+			pointer.setTime(start);
+			timeline.add(Calendar.MONTH, 1);
 		}
+		return timeMap;
 	}
 
-	public double compareSpace(Calendar time, double threshold) {
+	public Result compareSpace(Calendar time, double threshold) {
 		Earth earth = new Earth(time);
 		Jupiter jupiter = new Jupiter(time);
 		Mars mars = new Mars(time);
@@ -122,40 +127,54 @@ public class Solar extends Energy {
 		energyList.add(sun);
 		List<Triangle> triangleListA = new LinkedList<Triangle>();
 		Triangle i = null;
+		List<Energy> stackA = new LinkedList<Energy>();
 		for (Energy a : energyList) {
 			if (!(a instanceof Sun)){
 				for (Energy b : energyList) {
-					if (!(b instanceof Sun) && a != b) {
+					if (!(b instanceof Sun) && a != b && !stackA.contains(b)) {
 						i = new Triangle(sun, a, b);
 						triangleListA.add(i);
 					}
 				}
+				stackA.add(a);
 			}
 		}
 		List<Triangle> triangleListB = new LinkedList<Triangle>();
 		Triangle j = null;
+		List<Energy> stackB = new LinkedList<Energy>();
 		for (Energy a : this.energyList) {
 			if (!(a instanceof Sun)){
 			for (Energy b : this.energyList) {
-				if (!(b instanceof Sun) && a != b) {
+				if (!(b instanceof Sun) && a != b && !stackB.contains(b)) {
 					j = new Triangle(this.sun, a, b);
 					triangleListB.add(j);
 				}
 			}
+			stackB.add(a);
 			}
 		}
+		List<Pair> pairList = new LinkedList<Pair>();
 		double count = 0;
 		double total = triangleListA.size();
 		for (Triangle a : triangleListA) {
 			for (Triangle b : triangleListB) {
 				if (a.j.name.equals(b.j.name) && a.k.name.equals(b.k.name)) {
 					if (b.thresholdA(a.A, threshold)) {
+						Pair p = new Pair();
+						p.a = a.j.name.toLowerCase();
+						p.b = a.k.name.toLowerCase();
+						if(!pairList.contains(p)){
+							pairList.add(p);
+						}
 						count++;
 					}
 				}
 			}
 		}
-		return count / total;
+		Result result = new Result();
+		result.value = count/total;
+		result.pairList = pairList;
+		return result;
 	}
 
 	public double getKineticEnergy() {
