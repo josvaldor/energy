@@ -17,6 +17,7 @@ import org.josvaldor.prospero.energy.system.planet.venus.Venus;
 import org.josvaldor.prospero.energy.system.star.sun.Sun;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,16 +67,16 @@ public class Solar extends Energy {
 		this.energyList.add(sun);
 		this.getGravity();
 		this.setScale(0.00000005);
-//		try {
-//			System.out.println(this.searchSpace("2000-01-01","2017-01-01",0.8,0.5));
-//		} catch (ParseException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			System.out.println(this.searchSpace("1970-01-01 00:00:00","1980-01-01 00:00:00",0.95,0.1));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public Map<String,List<Result>> searchSpace(String startDate, String endDate, double threshold,double match) throws ParseException{
 		Map<String,List<Result>> timeMap = new HashMap<String,List<Result>>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date start = sdf.parse(startDate);
 		Date end = sdf.parse(endDate);
 		GregorianCalendar pointer = new GregorianCalendar();
@@ -187,6 +188,19 @@ public class Solar extends Energy {
 
 	public Calendar getTime() {
 		return this.time;
+	}
+	
+	public void setTime(String time){
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+		  Date date = formatter.parse(time);
+		  Calendar calendar = Calendar.getInstance();
+		  calendar.setTime(date);
+		  this.setTime(calendar);
+		} catch (ParseException e) {
+		  e.printStackTrace();
+		}
+		
 	}
 
 	public void setTime(Calendar time) {

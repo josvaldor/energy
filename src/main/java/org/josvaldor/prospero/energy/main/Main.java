@@ -20,7 +20,7 @@ import javax.swing.JFrame;
  */
 public class Main {
 	public static void main(String[] args) {
-		Solar solar = new Solar(new GregorianCalendar(2015, 9, 1));
+		Solar solar = new Solar(new GregorianCalendar(2016, 0, 1));
 		JFrame window = new JFrame("Prospero");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(true);
