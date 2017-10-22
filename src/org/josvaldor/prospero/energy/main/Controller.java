@@ -6,6 +6,8 @@ package org.josvaldor.prospero.energy.main;
 
 import org.josvaldor.prospero.energy.system.Solar;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @EnableAutoConfiguration
@@ -13,12 +15,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class Controller {
     private Solar solar = new Solar();
     
-//    @RequestMapping("/object")
-//    public JMXBean object(@RequestParam(value="query", defaultValue="null") String query, @RequestParam(value="attribute", defaultValue="null") String attribute ) {
-//    	Object value = null;
-//    	if(query != null && !query.equals("null") && attribute != null && !attribute.equals("null")){
-//    		value = this.getValue(query+"", attribute+"");
-//    	}
-//        return new JMXBean(query+"",attribute+"",value+"",System.currentTimeMillis()+"");
-//    }
+    @RequestMapping("/space")
+    public Object space(@RequestParam(value="time", defaultValue="null") String time){
+    	Object object  = null;
+    	if(time != null && !time.equals("null"))
+    		object = null;//solar.getEnergyList(time);//list does not work as return object
+    	return "hello";
+    }
+    
+    @RequestMapping("/time")
+    public Object time(@RequestParam(value="index", defaultValue="null") String index,
+    				   @RequestParam(value="start", defaultValue="null") String start,
+    				   @RequestParam(value="end", defaultValue="null") String end,
+    				   @RequestParam(value="threshold", defaultValue="null") String threshold,
+    				   @RequestParam(value="percent", defaultValue="null") String percent){
+    	Object object = null;//solar.searchSpace(index, start, end, Double.parseDouble(threshold), Double.parseDouble(percent));
+    	return "hello";
+    }
 }

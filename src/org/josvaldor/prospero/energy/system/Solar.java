@@ -1,10 +1,13 @@
 /*
- * 
+ * Author Joaquin Osvado Rodriguez
+ * Date 201710
+ * Copyright 2017 Joaquin Osvaldo Rodriguez All Rights Reserved. 
  */
 package org.josvaldor.prospero.energy.system;
 
 import org.josvaldor.prospero.energy.Coordinate;
 import org.josvaldor.prospero.energy.Energy;
+import org.josvaldor.prospero.energy.Orbital;
 import org.josvaldor.prospero.energy.Space;
 import org.josvaldor.prospero.energy.Triangle;
 import org.josvaldor.prospero.energy.system.moon.luna.Luna;
@@ -79,8 +82,8 @@ public class Solar extends Energy {
     		if(!e.name.equals(energy.name)){
     			prime = e.position.subtract(energy.position);
     			out = new Vector3D(prime.getX(),
-    							  ((prime.getY()*Math.cos(energy.obliquity))-(prime.getZ()*Math.sin(energy.obliquity))),
-    							  ((prime.getY()*Math.sin(energy.obliquity))+(prime.getZ()*Math.cos(energy.obliquity))));
+    							  ((prime.getY()*Math.cos(((Orbital)energy).obliquity))-(prime.getZ()*Math.sin(((Orbital)energy).obliquity))),
+    							  ((prime.getY()*Math.sin(((Orbital)energy).obliquity))+(prime.getZ()*Math.cos(((Orbital)energy).obliquity))));
     			
     			alpha = Math.atan(out.getY()/out.getX());
     			if(out.getX()<0){
@@ -99,6 +102,10 @@ public class Solar extends Energy {
     		}
     	}
     	return coordinateList;
+    }
+    
+    public ArrayList<Energy> getEnergyList(String time){
+    	return this.getEnergyList(this.getCalendar("yyyy-MM-dd", time));
     }
 
 	public ArrayList<Energy> getEnergyList(Calendar time) {
@@ -233,7 +240,8 @@ public class Solar extends Energy {
 	public double getKineticEnergy() {
 		double kineticEnergy = 0;
 		for (Energy e : this.energyList) {
-			kineticEnergy += 0.5 * e.mass * Math.pow(e.angularVelocity, 2) * Math.pow(e.radius, 2);
+			if(e instanceof Orbital)
+				kineticEnergy += 0.5 * e.mass * Math.pow(((Orbital)e).angularVelocity, 2) * Math.pow(((Orbital)e).radius, 2);
 		}
 		return kineticEnergy;
 	}
