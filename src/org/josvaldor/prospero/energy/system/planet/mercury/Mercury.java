@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package org.josvaldor.prospero.energy.system.planet.mercury;
+import org.josvaldor.prospero.energy.Orbital;
 import org.josvaldor.prospero.energy.Spheroid;
 import org.josvaldor.prospero.energy.Unit;
 import org.josvaldor.prospero.energy.system.planet.Planet;
@@ -17,8 +18,9 @@ import java.util.Calendar;
  */
 public class Mercury extends Planet {
     
-    public Mercury(Calendar calendar) {
+    public Mercury(Calendar calendar,Orbital centroid) {
         super();
+        this.centroid = centroid;
         this.name = "Mercury";
         this.radius = 2439.0;
         this.mass = 0.33011E24;

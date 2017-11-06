@@ -5,6 +5,7 @@
  */
 package org.josvaldor.prospero.energy.system.planet.venus;
 
+import org.josvaldor.prospero.energy.Orbital;
 import org.josvaldor.prospero.energy.Unit;
 import org.josvaldor.prospero.energy.system.planet.Planet;
 import java.awt.Color;
@@ -17,8 +18,9 @@ import java.util.Calendar;
  */
 public class Venus extends Planet {
 
-    public Venus(Calendar calendar) {
+    public Venus(Calendar calendar, Orbital centroid) {
         super();
+        this.centroid = centroid;
         this.name = "venus";
         this.radius = 3376;
         this.mass = 6.4185e23;

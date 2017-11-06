@@ -20,8 +20,8 @@ public class Planet extends Orbital {
 		g.setColor(Color.yellow);
 		g.drawLine((int) x, (int) y, (int) (this.force.getX() * scale), (int) (this.force.getY() * scale));
 		g.setColor(this.color);
-		double radius = 10;
-		g.drawLine((int) x, (int) y, 0, 0);
+		double radius = 5;
+		g.drawLine((int) x, (int) y, (int)this.centroid.position.getX(), (int)this.centroid.position.getY());
 		x = x - (radius / 2);
 		y = y - (radius / 2);
 		g.fillOval((int) x, (int) y, (int) radius, (int) radius);

@@ -1,5 +1,6 @@
 package org.josvaldor.prospero.energy.system.planet.earth;
 
+import org.josvaldor.prospero.energy.Orbital;
 import org.josvaldor.prospero.energy.Unit;
 import org.josvaldor.prospero.energy.system.planet.Planet;
 import java.awt.Color;
@@ -11,8 +12,10 @@ import java.util.Calendar;
  */
 public class Earth extends Planet {
 	
-     public Earth(Calendar calendar) {
+	
+     public Earth(Calendar calendar,Orbital centroid) {
         super();
+        this.centroid = centroid;
         this.name = "earth";
         this.mass = 5.9736e24;
         this.radius = 3443.9307;
@@ -34,5 +37,6 @@ public class Earth extends Planet {
         this.position = this.getSpace(this.time).eliptic;
         this.angularVelocity = 7.292115053925690e-05;
         this.obliquity = 23.439292;
+        this.rotation = 23.9345;//hour
     }
 }

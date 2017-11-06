@@ -37,7 +37,7 @@ public class Energy {
 	}
 
 	public void scale(double percentage) {
-		this.position.scalarMultiply(percentage);
+		this.position = this.position.scalarMultiply(percentage);
 	}
 	
 	public void setTime(String time){

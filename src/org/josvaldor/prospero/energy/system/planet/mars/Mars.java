@@ -5,6 +5,7 @@
  */
 package org.josvaldor.prospero.energy.system.planet.mars;
 
+import org.josvaldor.prospero.energy.Orbital;
 import org.josvaldor.prospero.energy.Unit;
 import org.josvaldor.prospero.energy.system.planet.Planet;
 import java.awt.Color;
@@ -17,8 +18,9 @@ import java.util.Calendar;
  */
 public class Mars extends Planet {
 
-    public Mars(Calendar calendar) {
+    public Mars(Calendar calendar,Orbital centroid) {
         super();
+        this.centroid = centroid;
         this.name = "mars";
         this.radius = 3376;
         this.mass = 6.4185e23;

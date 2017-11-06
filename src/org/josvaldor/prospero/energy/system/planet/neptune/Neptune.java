@@ -5,6 +5,7 @@
  */
 package org.josvaldor.prospero.energy.system.planet.neptune;
 
+import org.josvaldor.prospero.energy.Orbital;
 import org.josvaldor.prospero.energy.Unit;
 import org.josvaldor.prospero.energy.system.planet.Planet;
 import java.awt.Color;
@@ -17,8 +18,9 @@ import java.util.Calendar;
  */
 public class Neptune extends Planet {
 
-    public Neptune(Calendar calendar) {
+    public Neptune(Calendar calendar,Orbital centroid) {
         super();
+        this.centroid = centroid;
         this.name = "Neptune";
         this.mass = 102.413;
         this.radius = 24622;

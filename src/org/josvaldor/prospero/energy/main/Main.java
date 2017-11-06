@@ -27,19 +27,17 @@ import javax.swing.JFrame;
 @SpringBootApplication
 public class Main {
 	public static void main(String[] args) {
-		Solar solar = new Solar("2017-10-21 00:00:00");
-		List<Coordinate> cList = solar.getCoordinateList(new Earth(solar.getCalendar(null,"2017-10-21 00:00:00")), solar.getEnergyList(solar.getCalendar(null,"2017-10-21 00:00:00")));
-//		
-		for(Coordinate c: cList){
-			System.out.println(c);
-		}
+		Solar solar = new Solar();
+		//List<Coordinate> cList = solar.getCoordinateList(new Earth(solar.getCalendar(null,"1997-06-21 00:00:00")), solar.getEnergyList(solar.getCalendar(null,"1997-06-21 00:00:00")));
+//		for(Coordinate c: cList){
+//			System.out.println(c);
+//		}
 //		try {
 //			Map<String,List<Space>> map = solar.searchSpace("1970-01-01 00:00:00","1980-01-01 00:00:00",0.95,0.3);
 //		} catch (ParseException e) {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		
 		JFrame window = new JFrame("Energy");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(true);

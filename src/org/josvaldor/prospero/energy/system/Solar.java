@@ -36,7 +36,7 @@ import java.util.Map;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
-public class Solar extends Energy {
+public class Solar extends Orbital {
 
 	public ArrayList<Energy> energyList;
 	private static int defaultRate = Calendar.MONTH;
@@ -85,19 +85,31 @@ public class Solar extends Energy {
     							  ((prime.getY()*Math.cos(((Orbital)energy).obliquity))-(prime.getZ()*Math.sin(((Orbital)energy).obliquity))),
     							  ((prime.getY()*Math.sin(((Orbital)energy).obliquity))+(prime.getZ()*Math.cos(((Orbital)energy).obliquity))));
     			
-    			alpha = Math.atan(out.getY()/out.getX());
+    			alpha = Math.atan2(out.getY(),out.getX());
+    			delta = Math.asin(out.getZ()/Math.sqrt(out.getX()*out.getX()+out.getY()*out.getY())); 
     			if(out.getX()<0){
-    				alpha+=180;
+    				alpha=alpha+180;
     			}
     			if(out.getX()>0 && out.getY()<0){
-    				alpha+=360;
+    				alpha=alpha+360;
     			}
-    			alpha=alpha/15;
-    			delta = Math.atan(out.getZ()/Math.sqrt(Math.pow(out.getX(),2)+Math.pow(out.getY(), 2))); 
+//    			alpha=alpha/15;
+    			if(alpha>180){
+    				alpha=alpha-360;
+    			}
+
+//    			
+    			double angle = ((Earth)energy).getRotationCorrection(energy.time);
+    			alpha=alpha+angle;
+    			if(alpha>180){
+    				alpha=alpha-360;
+    			}
+    			
     			coordinate = new Coordinate();
-    			coordinate.latitude = alpha;
-    			coordinate.longitude = delta;
+    			coordinate.latitude = delta;
+    			coordinate.longitude = alpha;
     			coordinate.label = e.name;
+    			System.out.println(coordinate);
     			coordinateList.add(coordinate);
     		}
     	}
@@ -109,15 +121,16 @@ public class Solar extends Energy {
     }
 
 	public ArrayList<Energy> getEnergyList(Calendar time) {
-		Earth earth = new Earth(time);
-		Jupiter jupiter = new Jupiter(time);
-		Mars mars = new Mars(time);
-		Mercury mercury = new Mercury(time);
-		Neptune neptune = new Neptune(time);
-		Saturn saturn = new Saturn(time);
-		Venus venus = new Venus(time);
-		Uranus uranus = new Uranus(time);
 		Sun sun = new Sun(time);
+		Earth earth = new Earth(time,sun);
+		Jupiter jupiter = new Jupiter(time,sun);
+		Mars mars = new Mars(time,sun);
+		Mercury mercury = new Mercury(time,sun);
+		Neptune neptune = new Neptune(time,sun);
+		Saturn saturn = new Saturn(time,sun);
+		Venus venus = new Venus(time,sun);
+		Uranus uranus = new Uranus(time,sun);
+		Luna luna = new Luna(time,earth);
 		ArrayList<Energy> energyList = new ArrayList<Energy>();
 		energyList.add(earth);
 		energyList.add(jupiter);
@@ -128,6 +141,8 @@ public class Solar extends Energy {
 		energyList.add(venus);
 		energyList.add(uranus);
 		energyList.add(sun);
+//		energyList.add(luna);
+		
 		return energyList;
 	}
 
@@ -245,6 +260,38 @@ public class Solar extends Energy {
 		}
 		return kineticEnergy;
 	}
+	
+	public Vector3D getCenterOfMassNoSun(){
+		double totalMass=0;
+		double totalX=0;
+		double totalY=0;
+		double totalZ=0;
+		for (Energy e : this.energyList) {
+			if(!(e instanceof Sun)){
+			totalMass+=e.mass;
+			totalX+=e.position.getX()*e.mass;
+			totalY+=e.position.getY()*e.mass;
+			totalZ+=e.position.getZ()*e.mass;
+			}
+		}
+		return new Vector3D(totalX/totalMass,totalY/totalMass,totalZ/totalMass);
+	}
+	
+	public Vector3D getCenterOfMassNoJupiter(){
+		double totalMass=0;
+		double totalX=0;
+		double totalY=0;
+		double totalZ=0;
+		for (Energy e : this.energyList) {
+			if(!(e instanceof Sun)&&!(e instanceof Jupiter)){
+			totalMass+=e.mass;
+			totalX+=e.position.getX()*e.mass;
+			totalY+=e.position.getY()*e.mass;
+			totalZ+=e.position.getZ()*e.mass;
+			}
+		}
+		return new Vector3D(totalX/totalMass,totalY/totalMass,totalZ/totalMass);
+	}
 
 	public Calendar getTime() {
 		return this.time;
@@ -314,13 +361,24 @@ public class Solar extends Energy {
 
 	public void drawDate(Graphics2D g, Calendar c) {
 		g.setColor(Color.WHITE);
-		g.drawString(c.getTime() + "", -100, -150);
+		g.drawString(this.getCalendarString(null, c) + "", -100, -150);
 	}
 
 	public void draw(Graphics2D g) {
 		if (this.time != null) {
 			drawDate(g, this.time);
 		}
+		Vector3D center = this.getCenterOfMassNoSun();
+		System.out.println("center: "+center);
+		double x = center.getX() * scale;
+		double y = center.getY() * scale;
+		g.setColor(Color.red);
+		int radius = 10;
+		x = x - (radius / 2);
+		y = y - (radius / 2);
+		g.fillOval((int) x, (int) y, (int) radius, (int) radius);
+		
+		
 		for (Energy e : this.energyList) {
 			if (e instanceof Earth) {
 				Earth earth = (Earth) e;
@@ -356,36 +414,3 @@ public class Solar extends Energy {
 		}
 	}
 }
-// public Map<String,List<Result>> searchSpace(String startDate, String endDate,
-// double threshold,double match) throws ParseException{
-// Map<String,List<Result>> timeMap = new HashMap<String,List<Result>>();
-// Date start = this.getDate(null, startDate);
-// Date end = this.getDate(null, endDate);
-// GregorianCalendar pointer = new GregorianCalendar();
-// pointer.setTime(start);
-// GregorianCalendar timeline = new GregorianCalendar();
-// timeline.setTime(start);
-// while(!timeline.getTime().after(end)){
-//
-//
-// this.setTime(timeline);
-// Date date = timeline.getTime();
-// String fDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
-// timeMap.put(fDate, new LinkedList<Result>());
-// System.out.println("+"+fDate);
-// while (!pointer.getTime().after(end)) {
-// Result result = this.compareSpace(pointer, threshold);
-// Date d = pointer.getTime();
-// String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(d);
-// result.time = formattedDate;
-// if(result.match != 1 && result.match > match){
-// timeMap.get(fDate).add(result);
-// System.out.println("-"+formattedDate+" "+result.match+" "+result.pairList);
-// }
-// pointer.add(Calendar.MONTH, 1);
-// }
-// pointer.setTime(start);
-// timeline.add(Calendar.MONTH, 1);
-// }
-// return timeMap;
-// }

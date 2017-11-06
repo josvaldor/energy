@@ -5,6 +5,7 @@
  */
 package org.josvaldor.prospero.energy.system.planet.uranus;
 
+import org.josvaldor.prospero.energy.Orbital;
 import org.josvaldor.prospero.energy.Unit;
 import org.josvaldor.prospero.energy.system.planet.Planet;
 import java.awt.Color;
@@ -17,8 +18,9 @@ import java.util.Calendar;
  */
 public class Uranus extends Planet {
 
-    public Uranus(Calendar calendar) {
+    public Uranus(Calendar calendar,Orbital centroid) {
         super();
+        this.centroid = centroid;
         this.name = "Uranus";
         this.mass = 86.813E24;
         this.radius = 25559;

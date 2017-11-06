@@ -5,6 +5,7 @@
  */
 package org.josvaldor.prospero.energy.system.planet.jupiter;
 
+import org.josvaldor.prospero.energy.Orbital;
 import org.josvaldor.prospero.energy.Unit;
 import org.josvaldor.prospero.energy.system.planet.Planet;
 import java.awt.Color;
@@ -17,8 +18,9 @@ import java.util.Calendar;
  */
 public class Jupiter extends Planet {
     
-    public Jupiter(Calendar calendar) {
+    public Jupiter(Calendar calendar,Orbital centroid) {
         super();
+        this.centroid = centroid;
         this.name = "jupiter";
         this.mass = 1.8986e27;
         this.radius = 71492;
