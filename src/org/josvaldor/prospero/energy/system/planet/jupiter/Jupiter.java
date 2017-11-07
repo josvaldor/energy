@@ -22,7 +22,7 @@ public class Jupiter extends Planet {
         super();
         this.centroid = centroid;
         this.name = "jupiter";
-        this.mass = 1.8986e27;
+        this.mass = 1.89813e27;
         this.radius = 71492;
         this.color = Color.PINK;
         this.orbitalPeriod = 4332.589;

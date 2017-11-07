@@ -17,7 +17,7 @@ public class Earth extends Planet {
         super();
         this.centroid = centroid;
         this.name = "earth";
-        this.mass = 5.9736e24;
+        this.mass = 5.972e24;
         this.radius = 3443.9307;
         this.color = Color.BLUE;
         this.longitudeOfAscendingNode[0] = 0;

@@ -21,8 +21,8 @@ public class Uranus extends Planet {
     public Uranus(Calendar calendar,Orbital centroid) {
         super();
         this.centroid = centroid;
-        this.name = "Uranus";
-        this.mass = 86.813E24;
+        this.name = "uranus";
+        this.mass = 8.681E25;
         this.radius = 25559;
         this.color = Color.MAGENTA;
         this.longitudeOfAscendingNode[0] = 74.0005;// o

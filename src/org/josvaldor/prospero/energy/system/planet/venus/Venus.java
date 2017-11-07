@@ -23,7 +23,7 @@ public class Venus extends Planet {
         this.centroid = centroid;
         this.name = "venus";
         this.radius = 3376;
-        this.mass = 6.4185e23;
+        this.mass = 4.867e24;
         this.color = Color.DARK_GRAY;
         this.longitudeOfAscendingNode[0] = 76.6799;//o
         this.longitudeOfAscendingNode[1] = 2.46590E-5;//o

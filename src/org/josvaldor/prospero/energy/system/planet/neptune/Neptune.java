@@ -21,8 +21,8 @@ public class Neptune extends Planet {
     public Neptune(Calendar calendar,Orbital centroid) {
         super();
         this.centroid = centroid;
-        this.name = "Neptune";
-        this.mass = 102.413;
+        this.name = "neptune";
+        this.mass = 1.024E26;//102.413;
         this.radius = 24622;
         this.color = Color.BLUE;
         this.longitudeOfAscendingNode[0] = 131.6737;// o

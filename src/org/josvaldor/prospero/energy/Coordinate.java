@@ -7,7 +7,7 @@ public class Coordinate {
 	public double longitude;
 	
 	public String toString(){
-		return label+" "+this.latitude+" "+this.longitude;
+		return "Label:"+label+" Latidude:"+this.latitude+" Longitude:"+this.longitude;
 	}
 
 }

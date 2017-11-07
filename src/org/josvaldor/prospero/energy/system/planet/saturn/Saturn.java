@@ -22,7 +22,7 @@ public class Saturn extends Planet {
         super();
         this.centroid = centroid;
         this.name = "saturn";
-        this.mass = 1.8986e27;
+        this.mass =5.683e26;//1.8986e27;// 5.683e26;//1.8986e27;//5.683e26;
         this.radius = 58232;
         this.color = Color.CYAN;
         this.longitudeOfAscendingNode[0] = 113.6634;// o
@@ -42,5 +42,4 @@ public class Saturn extends Planet {
         this.position = this.getSpace(this.time).eliptic;
         this.angularVelocity = 1.636246173744684e-04;
     }
-
 }

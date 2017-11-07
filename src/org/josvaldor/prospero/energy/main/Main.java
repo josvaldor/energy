@@ -16,6 +16,7 @@ import org.josvaldor.prospero.energy.Coordinate;
 import org.josvaldor.prospero.energy.Space;
 import org.josvaldor.prospero.energy.system.Solar;
 import org.josvaldor.prospero.energy.system.planet.earth.Earth;
+import org.josvaldor.prospero.energy.system.star.sun.Sun;
 
 import java.text.ParseException;
 import java.util.GregorianCalendar;
@@ -28,7 +29,7 @@ import javax.swing.JFrame;
 public class Main {
 	public static void main(String[] args) {
 		Solar solar = new Solar();
-		//List<Coordinate> cList = solar.getCoordinateList(new Earth(solar.getCalendar(null,"1997-06-21 00:00:00")), solar.getEnergyList(solar.getCalendar(null,"1997-06-21 00:00:00")));
+		List<Coordinate> cList = solar.getCoordinateList(new Earth(solar.getCalendar(null,"1997-06-21 00:00:00"),new Sun()), solar.getEnergyList(solar.getCalendar(null,"1997-06-21 00:00:00")));
 //		for(Coordinate c: cList){
 //			System.out.println(c);
 //		}

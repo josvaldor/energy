@@ -23,7 +23,7 @@ public class Mars extends Planet {
         this.centroid = centroid;
         this.name = "mars";
         this.radius = 3376;
-        this.mass = 6.4185e23;
+        this.mass = 6.39e23;
         this.color = Color.RED;
         this.longitudeOfAscendingNode[0] = 49.5574;//o
         this.longitudeOfAscendingNode[1] = 2.11081E-5;//o

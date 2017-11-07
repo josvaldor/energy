@@ -1,6 +1,6 @@
 /*
  * Author Joaquin Osvado Rodriguez
- * Date 201710
+ * Date 201710-201711
  * Copyright 2017 Joaquin Osvaldo Rodriguez All Rights Reserved. 
  */
 package org.josvaldor.prospero.energy.system;
@@ -78,38 +78,37 @@ public class Solar extends Orbital {
     	Vector3D out = null;
     	double alpha;
     	double delta;
+    	double obliquity;
     	for(Energy e: energyList){
     		if(!e.name.equals(energy.name)){
     			prime = e.position.subtract(energy.position);
+    			obliquity = this.toRadians(((Orbital)energy).obliquity);
+    			System.out.println();
     			out = new Vector3D(prime.getX(),
-    							  ((prime.getY()*Math.cos(((Orbital)energy).obliquity))-(prime.getZ()*Math.sin(((Orbital)energy).obliquity))),
-    							  ((prime.getY()*Math.sin(((Orbital)energy).obliquity))+(prime.getZ()*Math.cos(((Orbital)energy).obliquity))));
-    			
-    			alpha = Math.atan2(out.getY(),out.getX());
-    			delta = Math.asin(out.getZ()/Math.sqrt(out.getX()*out.getX()+out.getY()*out.getY())); 
+    							  ((prime.getY()*Math.cos(obliquity))-(prime.getZ()*Math.sin(obliquity))),
+    							  ((prime.getY()*Math.sin(obliquity))+(prime.getZ()*Math.cos(obliquity))));
+    			alpha = Math.atan(out.getY()/out.getX());
+    			delta = Math.atan(out.getZ()/Math.sqrt(out.getX()*out.getX()+out.getY()*out.getY())); 
     			if(out.getX()<0){
-    				alpha=alpha+180;
+    				alpha=alpha+Math.PI;
     			}
     			if(out.getX()>0 && out.getY()<0){
-    				alpha=alpha+360;
+    				alpha=alpha+(2*Math.PI);
     			}
-//    			alpha=alpha/15;
-    			if(alpha>180){
-    				alpha=alpha-360;
-    			}
-
-//    			
+    			alpha=this.toDegrees(alpha);
+    			delta=this.toDegrees(delta);
     			double angle = ((Earth)energy).getRotationCorrection(energy.time);
     			alpha=alpha+angle;
-    			if(alpha>180){
+    			while(alpha>180){
     				alpha=alpha-360;
     			}
-    			
+    			while(delta>90){
+    				delta-=180;
+    			}
     			coordinate = new Coordinate();
     			coordinate.latitude = delta;
     			coordinate.longitude = alpha;
     			coordinate.label = e.name;
-    			System.out.println(coordinate);
     			coordinateList.add(coordinate);
     		}
     	}
@@ -261,7 +260,7 @@ public class Solar extends Orbital {
 		return kineticEnergy;
 	}
 	
-	public Vector3D getCenterOfMassNoSun(){
+	public Vector3D getCenterOfMass(){
 		double totalMass=0;
 		double totalX=0;
 		double totalY=0;
@@ -277,13 +276,52 @@ public class Solar extends Orbital {
 		return new Vector3D(totalX/totalMass,totalY/totalMass,totalZ/totalMass);
 	}
 	
-	public Vector3D getCenterOfMassNoJupiter(){
+	public Vector3D getCenterOfMass(Energy e1, Energy e2){
 		double totalMass=0;
 		double totalX=0;
 		double totalY=0;
 		double totalZ=0;
-		for (Energy e : this.energyList) {
-			if(!(e instanceof Sun)&&!(e instanceof Jupiter)){
+		List<Energy> eList = new LinkedList<Energy>();
+		eList.add(e1);
+		eList.add(e2);
+		for (Energy e : eList) {
+			if(!(e instanceof Sun)){
+			totalMass+=e.mass;
+			totalX+=e.position.getX()*e.mass;
+			totalY+=e.position.getY()*e.mass;
+			totalZ+=e.position.getZ()*e.mass;
+			}
+		}
+		return new Vector3D(totalX/totalMass,totalY/totalMass,totalZ/totalMass);
+	}
+	
+	public Vector3D getCenterOfMass(Energy e1, Energy e2, List<Energy> list){
+		double totalMass=0;
+		double totalX=0;
+		double totalY=0;
+		double totalZ=0;
+		List<Energy> eList = new LinkedList<Energy>();
+		eList.add(e1);
+		eList.add(e2);
+		eList.addAll(list);
+		for (Energy e : eList) {
+			if(!(e instanceof Sun)){
+			totalMass+=e.mass;
+			totalX+=e.position.getX()*e.mass;
+			totalY+=e.position.getY()*e.mass;
+			totalZ+=e.position.getZ()*e.mass;
+			}
+		}
+		return new Vector3D(totalX/totalMass,totalY/totalMass,totalZ/totalMass);
+	}
+	
+	public Vector3D getCenterOfMass(List<Energy> eList){
+		double totalMass=0;
+		double totalX=0;
+		double totalY=0;
+		double totalZ=0;
+		for (Energy e : eList) {
+			if(!(e instanceof Sun)){
 			totalMass+=e.mass;
 			totalX+=e.position.getX()*e.mass;
 			totalY+=e.position.getY()*e.mass;
@@ -368,16 +406,55 @@ public class Solar extends Orbital {
 		if (this.time != null) {
 			drawDate(g, this.time);
 		}
-		Vector3D center = this.getCenterOfMassNoSun();
+//		Map<String,Energy> map = this.getEnergyMap(this.energyList);
+//		
+//		List<Energy> eList = new LinkedList<Energy>();
+//		eList.add(map.get("earth"));
+//		eList.add(map.get("venus"));
+//		eList.add(map.get("mercury"));
+//		eList.add(map.get("mars"));
+		
+		Vector3D center = this.getCenterOfMass();
 		System.out.println("center: "+center);
 		double x = center.getX() * scale;
 		double y = center.getY() * scale;
-		g.setColor(Color.red);
+		g.setColor(Color.white);
 		int radius = 10;
 		x = x - (radius / 2);
 		y = y - (radius / 2);
 		g.fillOval((int) x, (int) y, (int) radius, (int) radius);
 		
+//		center = this.getCenterOfMass(map.get("jupiter"),map.get("uranus"),eList);
+//		System.out.println("jupiter uranus center: "+center);
+//		x = center.getX() * scale;
+//		y = center.getY() * scale;
+//		g.setColor(Color.green);
+//		radius = 10;
+//		x = x - (radius / 2);
+//		y = y - (radius / 2);
+//		g.fillOval((int) x, (int) y, (int) radius, (int) radius);
+//		
+//		center = this.getCenterOfMass(map.get("jupiter"),map.get("neptune"),eList);
+//		System.out.println("jupiter uranus center: "+center);
+//		x = center.getX() * scale;
+//		y = center.getY() * scale;
+//		g.setColor(Color.blue);
+//		radius = 10;
+//		x = x - (radius / 2);
+//		y = y - (radius / 2);
+//		g.fillOval((int) x, (int) y, (int) radius, (int) radius);
+//		
+//		
+//		center = this.getCenterOfMass(this.energyList);
+//		System.out.println("center: "+center);
+//		x = center.getX() * scale;
+//		y = center.getY() * scale;
+//		g.setColor(Color.white);
+//		radius = 10;
+//		x = x - (radius / 2);
+//		y = y - (radius / 2);
+//		g.fillOval((int) x, (int) y, (int) radius, (int) radius);
+////		
 		
 		for (Energy e : this.energyList) {
 			if (e instanceof Earth) {
@@ -412,5 +489,43 @@ public class Solar extends Orbital {
 				sun.draw(g);
 			}
 		}
+	}
+	
+	public Map<String,Energy> getEnergyMap(List<Energy> energyList){
+		Map<String,Energy> map = new HashMap<String,Energy>();
+		for (Energy e : energyList) {
+			if (e instanceof Earth) {
+				Earth earth = (Earth) e;
+				map.put("earth", earth);
+			} else if (e instanceof Luna) {
+				Luna luna = (Luna) e;
+				map.put(luna.name, luna);
+			} else if (e instanceof Jupiter) {
+				Jupiter jupiter = (Jupiter) e;
+				map.put(jupiter.name, jupiter);
+			} else if (e instanceof Venus) {
+				Venus venus = (Venus) e;
+				map.put(venus.name,venus );
+			} else if (e instanceof Mars) {
+				Mars mars = (Mars) e;
+				map.put(mars.name,mars );
+			} else if (e instanceof Mercury) {
+				Mercury mercury = (Mercury) e;
+				map.put(mercury.name,mercury );
+			} else if (e instanceof Neptune) {
+				Neptune neptune = (Neptune) e;
+				map.put(neptune.name,neptune );
+			} else if (e instanceof Saturn) {
+				Saturn saturn = (Saturn) e;
+				map.put(saturn.name,saturn );
+			} else if (e instanceof Uranus) {
+				Uranus uranus = (Uranus) e;
+				map.put(uranus.name,uranus );
+			} else if (e instanceof Sun) {
+				Sun sun = (Sun) e;
+				map.put(sun.name, sun);
+			}
+		}
+		return map;
 	}
 }

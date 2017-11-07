@@ -21,9 +21,9 @@ public class Mercury extends Planet {
     public Mercury(Calendar calendar,Orbital centroid) {
         super();
         this.centroid = centroid;
-        this.name = "Mercury";
+        this.name = "mercury";
         this.radius = 2439.0;
-        this.mass = 0.33011E24;
+        this.mass = 3.30104E23;
         this.color = Color.green;
         this.longitudeOfAscendingNode[0] = 48.3313;//o
         this.longitudeOfAscendingNode[1] = 3.24587E-5;//o

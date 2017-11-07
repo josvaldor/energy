@@ -20,8 +20,8 @@ import java.util.logging.Logger;
 public class SolarPanel extends JPanel implements MouseWheelListener, KeyListener, Runnable {
     // constants
 
-    public static final int WIDTH = 640;//1600
-    public static final int HEIGHT = 480;//WIDTH / 16 * 9;
+    public static final int WIDTH = 1600;
+    public static final int HEIGHT = WIDTH / 16 * 9;
     private Solar solar;// = new Solar(new GregorianCalendar());
     private Graphics2D g2;
     int increment = 1;
